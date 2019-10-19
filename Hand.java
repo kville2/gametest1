@@ -22,6 +22,11 @@ public class Hand
 		cards.add(card);
 	}
 	
+	public void remove(Card card)
+	{
+		cards.remove(card);
+	}
+	
 	public boolean give(Card card, Hand otherHand)
 	{
 		if(!cards.contains(card))
@@ -40,6 +45,7 @@ public class Hand
 	public String showHand()
 	{
 		String str = "";
+		String name2 ="";
 		for (Card c : cards)
 		{
 			str +=c.toString() + "\n";
@@ -47,6 +53,7 @@ public class Hand
 		}
 		return str;
 	}
+	
 
 	
 }
