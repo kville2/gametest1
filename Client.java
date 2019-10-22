@@ -13,24 +13,20 @@ import java.util.Scanner;
   
 public class Client  
 { 
-    final static int ServerPort = 9068; 
-  
-    public static void main(String args[]) throws UnknownHostException, IOException  
-    { 
-        Scanner scn = new Scanner(System.in); 
-          
-        // getting localhost ip 
-        InetAddress ip = InetAddress.getByName("localhost"); 
-          
-        // establish the connection 
-        Socket s = new Socket(ip, ServerPort); 
-          
-        // obtaining input and out streams 
-        DataInputStream dis = new DataInputStream(s.getInputStream()); 
-        DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
-  
-        // sendMessage thread 
-        Thread sendMessage = new Thread(new Runnable()  
+    final static int ServerPort = 6654;
+    
+    public static void main(String args[]) throws UnknownHostException, IOException
+    {
+    	Scanner scn = new Scanner(System.in);
+    	
+    	InetAddress ip = InetAddress.getByName("localhost");
+    	
+    	Socket s = new Socket(ip, ServerPort);
+    	
+    	DataInputStream dis = new DataInputStream(s.getInputStream());
+    	DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+    	
+    	Thread sendMessage = new Thread(new Runnable()  
         { 
             @Override
             public void run() { 
@@ -47,10 +43,9 @@ public class Client
                     } 
                 } 
             } 
-        }); 
-          
-        // readMessage thread 
-        Thread readMessage = new Thread(new Runnable()  
+        });
+    	
+    	Thread readMessage = new Thread(new Runnable()  
         { 
             @Override
             public void run() { 
@@ -67,10 +62,10 @@ public class Client
                 } 
             } 
         }); 
-  
-        sendMessage.start(); 
-        readMessage.start(); 
-  
-    } 
+    	
+    	sendMessage.start();
+    	readMessage.start();
+    			
+    }
 } 
 
