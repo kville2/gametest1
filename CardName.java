@@ -12,43 +12,43 @@ public enum CardName
 {
   
         //Treasure
-        COPPER(0,0,0,1,0, 0,false,"Copper"),
-        SILVER(0,0,0,2,0,0,false, "Silver"),
-        GOLD(0,0,0,3,0,0,false,"Gold"),
+        COPPER(0,0,0,1,0, 0,false,"Copper","Treasure"),
+        SILVER(0,0,0,2,0,0,false, "Silver","Treasure"),
+        GOLD(0,0,0,3,0,0,false,"Gold","Treasure"),
 
         //Victory Points
-        ESTATE(0,0,0,0,1,0,false,"Estate"),
-        DUCHY(0,0,0,0,3,0,false,"Duchy"),
-        PROVINCE(0,0,0,0,6,0,false,"Province"),
-        CURSE(0,0,0,0,-1,0,false,"Curse"),
+        ESTATE(0,0,0,0,1,0,false,"Estate","Victory"),
+        DUCHY(0,0,0,0,3,0,false,"Duchy","Victory"),
+        PROVINCE(0,0,0,0,6,0,false,"Province","Victory"),
+        CURSE(0,0,0,0,-1,0,false,"Curse","Victory"),
 
         //Actions
-        CELLAR(2,1,0,0,0,0,true,"Cellar"),
-        CHAPEL(2,0,0,0,0,0,true,"Chapel"),
-        MOAT(2,0,2,0,0,0,true, "Moat"),
-        HARBINGER(3,1,1,0,0,0,true,"Harbinger"),
-        MERCHANT(3,1,1,0,0,0,true,"Merchant"),
-        VASSAL(3,0,0,2,0,0,true,"Vassal"),
-        VILLAGE(3,2,1,0,0,0,false,"Village"),
-        WORKSHOP(3,0,0,0,0,0,true,"Workshop"),
-        BUREAUCRAT(4,0,0,0,0,0,true,"Bureaucrat"),
-        GARDENS(4,0,0,0,0,0,true,"Gardens"),
-        MILITIA(4,0,0,2,0,0,true,"Militia"),
-        MONEYLENDER(4,0,0,0,0,0,true,"Money Lender"),
-        POACHER(4,1,1,1,0,0,true,"Poacher"),
-        REMODEL(4,0,0,0,0,0,true,"Remodel"),
-        SMITHY(4,0,3,0,0,0,false,"Smithy"),
-        THRONEROOM(4,0,0,0,0,0,true,"Throne Room"),
-        BANDIT(5,0,0,0,0,0,true,"Bandit"),
-        COUNCILROOM(5,0,4,0,0,1,true,"Council Room"),
-        FESTIVAL(5,2,0,2,0,1,false,"Festival"),
-        LABORATORY(5,1,2,0,0,0,false,"Laboratory"),
-        LIBRARY(5,0,0,0,0,0,true,"Library"),
-        MARKET(5,1,1,1,0,1,true,"Market"),
-        MINE(5,0,0,0,0,0,true,"Mine"),
-        SENTRY(5,1,1,0,0,0,true,"Sentry"),
-        WITCH(5,0,2,0,0,0,true,"Witch"),
-        ARTISAN(6,0,0,0,0,0,true,"Artisan");
+        CELLAR(2,1,0,0,0,0,true,"Cellar","Action"),
+        CHAPEL(2,0,0,0,0,0,true,"Chapel","Action"),
+        MOAT(2,0,2,0,0,0,true, "Moat","Action"),
+        HARBINGER(3,1,1,0,0,0,true,"Harbinger","Action"),
+        MERCHANT(3,1,1,0,0,0,true,"Merchant","Action"),
+        VASSAL(3,0,0,2,0,0,true,"Vassal","Action"),
+        VILLAGE(3,2,1,0,0,0,false,"Village","Action"),
+        WORKSHOP(3,0,0,0,0,0,true,"Workshop","Action"),
+        BUREAUCRAT(4,0,0,0,0,0,true,"Bureaucrat","Action"),
+        GARDENS(4,0,0,0,0,0,true,"Gardens","Action"),
+        MILITIA(4,0,0,2,0,0,true,"Militia","Action"),
+        MONEYLENDER(4,0,0,0,0,0,true,"Money Lender","Action"),
+        POACHER(4,1,1,1,0,0,true,"Poacher","Action"),
+        REMODEL(4,0,0,0,0,0,true,"Remodel","Action"),
+        SMITHY(4,0,3,0,0,0,false,"Smithy","Action"),
+        THRONEROOM(4,0,0,0,0,0,true,"Throne Room","Action"),
+        BANDIT(5,0,0,0,0,0,true,"Bandit","Action"),
+        COUNCILROOM(5,0,4,0,0,1,true,"Council Room","Action"),
+        FESTIVAL(5,2,0,2,0,1,false,"Festival","Action"),
+        LABORATORY(5,1,2,0,0,0,false,"Laboratory","Action"),
+        LIBRARY(5,0,0,0,0,0,true,"Library","Action"),
+        MARKET(5,1,1,1,0,1,true,"Market","Action"),
+        MINE(5,0,0,0,0,0,true,"Mine","Action"),
+        SENTRY(5,1,1,0,0,0,true,"Sentry","Action"),
+        WITCH(5,0,2,0,0,0,true,"Witch","Action"),
+        ARTISAN(6,0,0,0,0,0,true,"Artisan","Action");
     
 	private final int cost;
     private final int actions;
@@ -58,7 +58,8 @@ public enum CardName
     private Boolean special;
     private final int buys;
     private final String name;
-    private CardName(int cost, int actions, int cards, int cash, int vp, int buys, Boolean special, String name)
+	private final String type;
+    private CardName(int cost, int actions, int cards, int cash, int vp, int buys, Boolean special, String name, String type)
     {
         this.cost = cost;
         this.actions = actions;
@@ -68,7 +69,13 @@ public enum CardName
         this.special = special;
         this.buys=buys;
         this.name = name;
+        this.type = type;
 
+    }
+    
+    public String getType()
+    {
+    	return type;
     }
     
     public int getCost()

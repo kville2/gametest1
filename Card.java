@@ -54,6 +54,11 @@ public class Card
 		return name.getName();
 	}
 	
+	public String getType()
+	{
+		return name.getType();
+	}
+	
 	public String toString()
 	{
 		String str = "";
