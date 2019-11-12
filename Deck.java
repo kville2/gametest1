@@ -20,7 +20,6 @@ public class Deck extends Hand
 			this.add(c);
 		}
 	}
-	
 
 	public void clearDiscard(DiscardDeck deck, int cardsize)
 	{
@@ -32,8 +31,7 @@ public class Deck extends Hand
 		}
 		
 	}
-	
-	
+		
 	public void shuffle()
 	{
 		for (int i = cards.size() - 1; i > 0; i--)
@@ -61,6 +59,7 @@ public class Deck extends Hand
 	{
 		for(int i = 0; i < perHand; i++)
 		{
+			
 			this.give(cards.get(0), hand);
 		}
 	}

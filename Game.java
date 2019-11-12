@@ -9,7 +9,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
-import com.sun.glass.events.MouseEvent;
+
 
 
 public class Game extends GameWindow
@@ -34,6 +34,7 @@ public class Game extends GameWindow
 	static String imagePath = null;
 	static Deck deck = new Deck();
 	static Hand hand = new Hand();
+	static DiscardDeck discard = new DiscardDeck();
 	static int cardsize;
 	static int cash;
 	static int vp;
@@ -41,17 +42,14 @@ public class Game extends GameWindow
 	static int actions;
 	static String playerName;
 	static String infoString;
+	static String[] handNames;
+	static String handn ="";
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public static void main(String[] args) 
-	{		
-	    theDeck();
 
-	}
-	
 	public static void firstDeck()
 	{
 		
@@ -80,6 +78,14 @@ public class Game extends GameWindow
 		
 	}
 	
+	public static void newHand()
+	{
+		discard.discard(hand, cardsize);
+		deck.deal(hand, 5);
+		i = 0;
+		displayHand();
+	}
+	
 	public static void firstSetup()
 	{
 		deck.populate();
@@ -103,6 +109,7 @@ public class Game extends GameWindow
 			assignImgs(c);
 			i +=1;			
 		}
+		handNames = handn.split(":");
 	}
 	
 	public static void cardType(Card c)
@@ -142,12 +149,17 @@ public class Game extends GameWindow
 	
 	public static void assignImgs(Card c)
 	{
+		
 		imgs[i] = new JButton();
 		imgs[i].setMargin(new Insets(0,0,0,0));
-		imagePath = "res/Images/" + c.getName() + ".jpg";
-		imgs[i].setIcon(new ImageIcon(imagePath));
-		imgs[i].setDisabledIcon(new ImageIcon(imagePath));
+		imagePath = "/Images/" + c.getName() + ".jpg";
+		java.net.URL imageUrl = Game.class.getResource("/Images/" + c.getName() + ".jpg");
+		imgs[i].setIcon(new ImageIcon(imageUrl));		
+		imgs[i].setDisabledIcon(new ImageIcon(imageUrl));		
 		vpEnables(isVictory);
+		handn += c.getName() + ":";
+		
+		
 	}
 	
 	public static void vpEnables(Boolean isVictory)
@@ -189,10 +201,17 @@ public class Game extends GameWindow
 		return imgs;
 	}
 	
+	public static void buyCard(String kingdom)
+	{
+		String kingdomCard = kingdom;
+		discard.addBuyCard(kingdomCard);
+		
+	}
+
 	public static void theDeck()
 	{
-		Deck deck = new Deck();
-		DiscardDeck discard = new DiscardDeck();
+
+
 		deck.populate();
 		System.out.println("A full deck");
 		System.out.println(deck.showHand());
@@ -220,7 +239,7 @@ public class Game extends GameWindow
 		System.out.println("The hand is empty");
 		System.out.println(hand.showHand());
 		deck.deal(hand,  5);
-		System.out.println("Dealign a hand");
+		System.out.println("Dealing a hand");
 		System.out.println("A hand deck");
 		System.out.println(hand.showHand());
 		System.out.println("This is the deck pile");

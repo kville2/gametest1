@@ -1,38 +1,69 @@
-package cschat;
+package domgame;
 
 import java.net.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 public class StartScreen extends JFrame 
 {
-    String username, address = "localhost";
+    String username, address = "10.82.2.2";
     ArrayList<String> users = new ArrayList();
+    ArrayList<String> kingArray;
+    static String buyScreenKingdoms;
     int port = 2222;
     Boolean isConnected = false;
     int maxKingdoms = 0;
-    
     Socket sock;
     BufferedReader reader;
     PrintWriter writer;
+	private JButton btnBuy;
+	static Game game;
+	static JButton[] imgs;
+	static JButton[] pfields;
+	static JLabel[] tempfields;
+	static int i;
+	static int cash;
+	static boolean activePlayer = false;
+	static String king = "";
+	static String playerTurnNum = "";
+	static String kings;
+	static String tempKings[];
+	static String kingdoms[];
+	StartScreen sc;
+	static String imagePath;
+	static java.net.URL imageUrl;
+	public static int buys = 1;
+
     
     //--------------------------//
     
@@ -103,25 +134,60 @@ public class StartScreen extends JFrame
     {
         init();
     }
-    
-    //--------------------------//
-    
+     
     public class IncomingReader implements Runnable
     {
         @Override
         public void run() 
         {
             String[] data;
-            String stream, done = "Done", connect = "Connect", disconnect = "Disconnect", chat = "Chat";
-
+            String stream, done = "Done", connect = "Connect", disconnect = "Disconnect", chat = "Chat", tLeader = "Leader";;
+            String kingdoms = "Kingdoms";
             try 
             {
                 while ((stream = reader.readLine()) != null) 
                 {
                      data = stream.split(":");
+                     
 
-                     if (data[2].equals(chat)) 
+                     if(data[0].equals(kingdoms))
                      {
+                    	 buyScreenKingdoms = stream;
+                    	 startGameScreen();
+                     }
+                     
+                     
+                     else if(data[0].equals("pField"))
+                     {
+                    	 if(!playerTurnNum.equals("Player1"))
+                    	 {
+                    		int length = pnlPlayingField.getWidth();
+         					int height = pnlPlayingField.getHeight();
+         					JLabel newLbl = new JLabel(new ImageIcon(GameWindow.class.getResource("/Images/" + data[1] +".jpg")));
+                    		pnlPlayingField.add(newLbl);
+                    		if(length < pnlPlayingField.getWidth())
+           		            {
+           		            	pnlPlayingField.setPreferredSize(new Dimension(length, height));
+           		            }
+                    		validate();
+         		            repaint();
+                    	 }
+                    	 else
+                    	 {
+                    		 break;
+                    	 }
+                    	 
+                     }
+              
+
+                     else if (data[2].equals(chat)) 
+                     {
+                    	if(playerTurnNum == "") 
+                    	{
+                    		playerTurnNum = data[3];
+                    		
+                    	}
+                    	
                         ta_chat.append(data[0] + ": " + data[1] + "\n");
                         ta_chat.setCaretPosition(ta_chat.getDocument().getLength());
                      } 
@@ -147,7 +213,14 @@ public class StartScreen extends JFrame
 
     //--------------------------//
     
-    @SuppressWarnings("unchecked")
+    public void startBuyScreen()
+    {
+    	BuyScreen fr = new BuyScreen();
+    	fr.setVisible(true);
+    }
+    
+   
+    
     public void init() 
     {
     	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -175,7 +248,7 @@ public class StartScreen extends JFrame
     	scrollPane_1.setViewportView(lstKingdoms);
     	DefaultListModel mdl1 = new DefaultListModel();
     	lstKingdoms.setModel(mdl1);
-    	String[] items = {"Cellar", "Chapel", "Moat", "Harbinger", "Merchant", "Vassal", "Village", "Workshop", "Bureacrat", "Gardens", "Militia", "Moneylender", "Poacher", "Remodel", "Smithy", "Throne Room", "Bandit", "Council Room", "Festival", "Laboratory", "Library", "Market", "Mine", "Sentry", "Witch", "Artisan"};
+    	String[] items = {"Cellar", "Chapel", "Moat", "Harbinger", "Merchant", "Vassal", "Village", "Workshop", "Bureaucrat", "Gardens", "Militia", "Moneylender", "Poacher", "Remodel", "Smithy", "Throne_Room", "Bandit", "Council_Room", "Festival", "Laboratory", "Library", "Market", "Mine", "Sentry", "Witch", "Artisan"};
     	for(int i =0; i<items.length; i++)
     	{
     		mdl1.add(i, items[i]);
@@ -186,7 +259,7 @@ public class StartScreen extends JFrame
     	panel_1.add(scrollPane_2);
     	
     	lstSelected = new JList();
-    	DefaultListModel lstModel2 = new DefaultListModel();
+    	lstModel2 = new DefaultListModel();
     	lstSelected.setModel(lstModel2);
     	scrollPane_2.setViewportView(lstSelected);
     	
@@ -209,6 +282,11 @@ public class StartScreen extends JFrame
     	btnStartGame.setFont(new Font("Tahoma", Font.PLAIN, 10));
     	btnStartGame.setBounds(285, 463, 57, 51);
     	panel.add(btnStartGame);	
+    	btnStartGame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+               startGameActionPerformed(evt);
+            }
+        });
     	
     	tf_username = new JTextField();
     	tf_username.setBounds(285, 440, 277, 20);
@@ -270,7 +348,7 @@ public class StartScreen extends JFrame
     			else {break;}
     			}
     			
-    ;
+    
 
     			}
     	}});
@@ -316,8 +394,278 @@ public class StartScreen extends JFrame
     	
     }
 
+    public void startGameScreen()
+    {
+    	gameInit();
+    	
+    }
     
+    public  void gameInit()
+    {
+    	
+    	if(playerTurnNum == "Player1")
+    	{
+    		activePlayer = true;
+    	}
+		setResizable(false);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1347, 869);
+		contentPane = new JPanel();
+		contentPane.setBorder(new LineBorder(new Color(0, 0, 0)));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		contentPane.setVisible(true);
+		
+		JPanel panel_2 = new JPanel();
+		panel_2.setBounds(1129, 11, 202, 332);
+		panel_2.setBorder(null);
+		contentPane.add(panel_2);
+		panel_2.setLayout(new BorderLayout(0, 0));
+		
+		JLabel lblDeck = new JLabel("");
+		lblDeck.setIcon(new ImageIcon(GameWindow.class.getResource("/Images/Artisan.jpg")));
+		panel_2.add(lblDeck, BorderLayout.CENTER);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.getViewport().setPreferredSize(new Dimension(512, 448));
+		scrollPane.setBounds(10, 11, 1103, 341);
+		contentPane.add(scrollPane);
+		JScrollPane scrollPane_2 = new JScrollPane();
+		scrollPane_2.setBounds(10, 363, 439, 120);
+		contentPane.add(scrollPane_2);
+		
+		JPanel panel_5 = new JPanel();
+		scrollPane_2.setViewportView(panel_5);
+		panel_5.setLayout(null);
+		
+	    taInfo = new JTextArea();
+		taInfo.setText("Player info/VPs");
+		taInfo.setWrapStyleWord(true);
+		taInfo.setEditable(false);
+		taInfo.setBounds(0, 0, 437, 118);
+		panel_5.add(taInfo);
+
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(10, 488, 1103, 341);
+		contentPane.add(scrollPane_1);
+		
+		JPanel pnlHand = new JPanel();
+		scrollPane_1.setViewportView(pnlHand);
+		Game.onStart();
+		imgs = Game.getJButtons();
+		pnlPlayingField = new JPanel();
+		scrollPane.add(pnlPlayingField);
+		scrollPane.setViewportView(pnlPlayingField);
+		pnlPlayingField.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
+		for(i = 0; i < imgs.length; i++)
+		{
+			
+			
+			pnlHand.add(imgs[i]);
+			int in = Arrays.asList(imgs).indexOf(imgs[i]);
+			if(!playerTurnNum.equals("Player1"))
+			{
+				imgs[i].setEnabled(false);
+			}
+			
+
+
+			imgs[i].addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) 
+		        {
+					String tempString = null;
+					int length = pnlPlayingField.getWidth();
+					int height = pnlPlayingField.getHeight();
+					int index =in;
+		            pnlPlayingField.add(imgs[index]);
+		            imgs[index].setEnabled(false);
+		            if(length < pnlPlayingField.getWidth())
+		            {
+		            	pnlPlayingField.setPreferredSize(new Dimension(length, height));
+		            }
+		            pnlHand.remove(imgs[index]);
+		            
+		            cash = Game.handCash(cash,index);
+		            taInfo.setText("Current Cash:" + String.valueOf(cash) );
+		            validate();
+		            repaint();
+		            tempString = Game.handNames[index];
+		            sendPlayingField(tempString);
+		            
+		        }
+				
+		    });
+		}
+		
+		
+		JPanel panel_3 = new JPanel();
+		panel_3.setBorder(null);
+		panel_3.setBounds(1129, 497, 202, 332);
+		contentPane.add(panel_3);
+		panel_3.setLayout(new BorderLayout(0, 0));
+		
+		JLabel lblNewLabel_2 = new JLabel("");
+		lblNewLabel_2.setIcon(new ImageIcon(GameWindow.class.getResource("/Images/Copper.jpg")));
+		panel_3.add(lblNewLabel_2, BorderLayout.CENTER);
+		
+		JButton btnBuyArea = new JButton("Buy Area");
+		btnBuyArea.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				BuyScreen fr = new BuyScreen();
+				kingdoms = buyScreenKingdoms.split(":");
+				java.net.URL imageUrl = Game.class.getResource("/Images/" + kingdoms[1] + ".jpg");
+				BuyScreen.btn1.setDisabledIcon(new ImageIcon(imageUrl));
+				imageUrl = Game.class.getResource("/Images/" + kingdoms[2] + ".jpg");
+				BuyScreen.btn2.setDisabledIcon(new ImageIcon(imageUrl));
+				imageUrl = Game.class.getResource("/Images/" + kingdoms[3] + ".jpg");
+				BuyScreen.btn3.setDisabledIcon(new ImageIcon(imageUrl));
+				imageUrl = Game.class.getResource("/Images/" + kingdoms[4] + ".jpg");
+				BuyScreen.btn4.setDisabledIcon(new ImageIcon(imageUrl));
+				imageUrl = Game.class.getResource("/Images/" + kingdoms[5] + ".jpg");
+				BuyScreen.btn5.setDisabledIcon(new ImageIcon(imageUrl));
+				imageUrl = Game.class.getResource("/Images/" + kingdoms[6] + ".jpg");
+				BuyScreen.btn6.setDisabledIcon(new ImageIcon(imageUrl));
+				imageUrl = Game.class.getResource("/Images/" + kingdoms[7] + ".jpg");
+				BuyScreen.btn7.setDisabledIcon(new ImageIcon(imageUrl));
+				imageUrl = Game.class.getResource("/Images/" + kingdoms[8] + ".jpg");
+				BuyScreen.btn8.setDisabledIcon(new ImageIcon(imageUrl));
+				imageUrl = Game.class.getResource("/Images/" + kingdoms[9] + ".jpg");
+				BuyScreen.btn9.setDisabledIcon(new ImageIcon(imageUrl));
+				imageUrl = Game.class.getResource("/Images/" + kingdoms[10] + ".jpg");
+				BuyScreen.btn10.setDisabledIcon(new ImageIcon(imageUrl));
+				imageUrl = Game.class.getResource("/Images/Copper.jpg");
+				BuyScreen.btnCopper.setDisabledIcon(new ImageIcon(imageUrl));
+				imageUrl = Game.class.getResource("/Images/Silver.jpg");
+				BuyScreen.btnSilver.setDisabledIcon(new ImageIcon(imageUrl));
+				imageUrl = Game.class.getResource("/Images/Gold.jpg");
+				BuyScreen.btnGold.setDisabledIcon(new ImageIcon(imageUrl));
+				imageUrl = Game.class.getResource("/Images/Estate.jpg");
+				BuyScreen.btnEstate.setDisabledIcon(new ImageIcon(imageUrl));
+				imageUrl = Game.class.getResource("/Images/Duchy.jpg");
+				BuyScreen.btnDuchy.setDisabledIcon(new ImageIcon(imageUrl));
+				imageUrl = Game.class.getResource("/Images/Province.jpg");
+				BuyScreen.btnProvince.setDisabledIcon(new ImageIcon(imageUrl));
+				imageUrl = Game.class.getResource("/Images/Curse.jpg");
+				BuyScreen.btnCurse.setDisabledIcon(new ImageIcon(imageUrl));
+				BuyScreen.btnCopper.setEnabled(false);
+				BuyScreen.btnSilver.setEnabled(false);
+				BuyScreen.btnGold.setEnabled(false);
+				BuyScreen.btnEstate.setEnabled(false);
+				BuyScreen. btnDuchy.setEnabled(false);
+				BuyScreen.btnProvince.setEnabled(false);
+				BuyScreen.btnCurse.setEnabled(false);
+				BuyScreen.btn1.setEnabled(false);
+				BuyScreen.btn2.setEnabled(false);
+				BuyScreen.btn3.setEnabled(false);
+				BuyScreen.btn4.setEnabled(false);
+				BuyScreen.btn5.setEnabled(false);
+				BuyScreen.btn6.setEnabled(false);
+				BuyScreen.btn7.setEnabled(false);
+				BuyScreen.btn8.setEnabled(false);
+				BuyScreen.btn9.setEnabled(false);
+				BuyScreen.btn10.setEnabled(false);
+				fr.setVisible(true);
+			}
+		});
+		btnBuyArea.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		btnBuyArea.setBounds(1129, 354, 89, 132);
+		contentPane.add(btnBuyArea);
+		
+		JButton btnTrashScreen = new JButton("Trash Area");
+		btnTrashScreen.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		btnTrashScreen.setBounds(1242, 354, 89, 132);
+		contentPane.add(btnTrashScreen);
+		
+		JPanel panel_4 = new JPanel();
+		panel_4.setBounds(460, 363, 202, 120);
+		contentPane.add(panel_4);
+		panel_4.setLayout(new BorderLayout(0, 0));
+		
+		lblPhase = new JLabel("SelectAction");
+		lblPhase.setBorder(new LineBorder(new Color(0, 0, 0)));
+		lblPhase.setHorizontalAlignment(SwingConstants.CENTER);
+		panel_4.add(lblPhase, BorderLayout.NORTH);
+		
+		btnPlayAction = new JButton("Play Action");
+		boolean checkAction = Game.isAction();
+		if(checkAction == false)
+		{
+			btnPlayAction.setEnabled(false);
+			lblPhase.setText("Select Treasures");
+		}
+		
+		else
+		{
+			btnPlayAction.setEnabled(true);
+		}
+		
+		if(!playerTurnNum.equals("Player1"))
+		{
+			btnPlayAction.setEnabled(false);
+		}
+
+		panel_4.add(btnPlayAction, BorderLayout.WEST);
+		
+		btnBuy = new JButton("Buy Cards");
+		panel_4.add(btnBuy, BorderLayout.EAST);
+		if(!playerTurnNum.equals("Player1"))
+		{
+			btnBuy.setEnabled(false);
+		}
+		btnBuy.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				
+				BuyScreen fr = new BuyScreen();
+				fr.setVisible(true);
+					
+			}
+		});
+	
+		btnEndTurn = new JButton("End Turn");
+		panel_4.add(btnEndTurn, BorderLayout.SOUTH);
+		if(playerTurnNum == "Player1")
+		{
+			btnEndTurn.setEnabled(true);
+		}
+		btnEndTurn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				cash = 0;
+				buys = 1;
+				btnBuy.setEnabled(false);
+				btnPlayAction.setEnabled(false);
+				btnEndTurn.setEnabled(false);
+				Game.newHand();
+			}
+		});
+
+		
+		JScrollPane scrollPane_3 = new JScrollPane();
+		scrollPane_3.setBounds(672, 363, 439, 120);
+		contentPane.add(scrollPane_3);
+		
+		JPanel panel_6 = new JPanel();
+		scrollPane_3.setViewportView(panel_6);
+		panel_6.setLayout(null);
+		
+		taTurnLogs = new JTextArea();
+		taTurnLogs.setText("Turn Logs");
+		taTurnLogs.setEditable(false);
+		taTurnLogs.setWrapStyleWord(true);
+		taTurnLogs.setBounds(0, 0, 437, 118);
+		panel_6.add(taTurnLogs);
+		this.setVisible(true);
+		repaint();
+	}
     
+    private void sendPlayingField(String kingdoms2)
+    {
+    	writer.println("pField:" + kingdoms2);
+    	writer.flush();
+    }
 
     private void tf_addressActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tf_addressActionPerformed
        
@@ -366,6 +714,36 @@ public class StartScreen extends JFrame
         Disconnect();
     }//GEN-LAST:event_b_disconnectActionPerformed
 
+    private void startGameActionPerformed(ActionEvent evt)
+    {
+    	
+    	for(int m = 0; m <lstModel2.size(); m++)
+    	{
+    		 
+    		 king += lstModel2.get(m).toString()+ ":";
+    	}
+    	kings = king;
+    	kingdoms = kings.split(":");
+    	king = "Kingdoms:" + king;
+    	buyScreenKingdoms = king;
+    	try
+    	{
+    		writer.println(buyScreenKingdoms);
+    		writer.flush();
+    	}
+    	catch(Exception ex)
+    	{
+    		
+    	}
+    	
+    	
+    }
+    
+    public static String setBuyScreen()
+    {
+    	return buyScreenKingdoms;
+    }
+    
     private void b_anonymousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_anonymousActionPerformed
         tf_username.setText("");
         if (isConnected == false) 
@@ -406,14 +784,20 @@ public class StartScreen extends JFrame
 
     private void b_sendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_sendActionPerformed
         String nothing = "";
-        if ((tf_chat.getText()).equals(nothing)) {
+        if ((tf_chat.getText()).equals(nothing)) 
+        {
             tf_chat.setText("");
             tf_chat.requestFocus();
-        } else {
-            try {
+        }
+        else 
+        {
+            try 
+            {
                writer.println(username + ":" + tf_chat.getText() + ":" + "Chat");
                writer.flush(); // flushes the buffer
-            } catch (Exception ex) {
+            } 
+            catch (Exception ex) 
+            {
                 ta_chat.append("Message was not sent. \n");
             }
             tf_chat.setText("");
@@ -422,7 +806,7 @@ public class StartScreen extends JFrame
 
         tf_chat.setText("");
         tf_chat.requestFocus();
-    }//GEN-LAST:event_b_sendActionPerformed
+    }
 
     public static void main(String args[]) 
     {
@@ -454,11 +838,38 @@ public class StartScreen extends JFrame
     private javax.swing.JTextField tf_port;
     private javax.swing.JTextField tf_username;
     private JPanel contentPane;
+    private JPanel pnlPlayingField;
     private JButton btnAddKingdom;
     private JList lstSelected;
     private JList lstKingdoms;
     private JComboBox cmboPresets;
     private JButton btnRemove;
     private JButton btnStartGame;
+    private JTextArea taTurnLogs;
+    private JButton btnEndTurn;
+    private JLabel lblPhase;
+    private JButton btnPlayAction;
+    private DefaultListModel lstModel2;
+    private JTextArea taInfo;
+    private JButton btnCopper;
+    private JButton btnSilver;
+    private JButton btnGold;
+    private JButton btnEstate;
+    private JButton btnDuchy;
+    private JButton btnProvince;
+    private JButton btnCurse;
+    private JButton btn1;
+    private JButton btn2;
+    private JButton btn3;
+    private JButton btn4;
+    private JButton btn5;
+    private JButton btn6;
+    private JButton btn7;
+    private JButton btn8;
+    private JButton btn9;
+    private JButton btn10;
+
+
+
     // End of variables declaration//GEN-END:variables
 }
