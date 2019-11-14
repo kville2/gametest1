@@ -36,7 +36,7 @@ import javax.swing.border.LineBorder;
 
 public class StartScreen extends JFrame 
 {
-    String username, address = "10.82.2.2";
+    String username, address = "localhost";
     ArrayList<String> users = new ArrayList();
     ArrayList<String> kingArray;
     static String buyScreenKingdoms;
@@ -56,14 +56,17 @@ public class StartScreen extends JFrame
 	static boolean activePlayer = false;
 	static String king = "";
 	static String playerTurnNum = "";
+	static String turnOrder ="";
 	static String kings;
 	static String tempKings[];
+	static String tempHand[];
 	static String kingdoms[];
 	StartScreen sc;
 	static String imagePath;
 	static java.net.URL imageUrl;
 	public static int buys = 1;
-
+	static Boolean gameStarted = false;
+	static int imageL;
     
     //--------------------------//
     
@@ -159,34 +162,74 @@ public class StartScreen extends JFrame
                      
                      else if(data[0].equals("pField"))
                      {
-                    	 if(!playerTurnNum.equals("Player1"))
-                    	 {
+                    	 
                     		int length = pnlPlayingField.getWidth();
          					int height = pnlPlayingField.getHeight();
+         					pnlPlayingField.setVisible(true);
          					JLabel newLbl = new JLabel(new ImageIcon(GameWindow.class.getResource("/Images/" + data[1] +".jpg")));
                     		pnlPlayingField.add(newLbl);
+                    		newLbl.setVisible(true);
                     		if(length < pnlPlayingField.getWidth())
            		            {
            		            	pnlPlayingField.setPreferredSize(new Dimension(length, height));
            		            }
-                    		validate();
-         		            repaint();
-                    	 }
-                    	 else
-                    	 {
-                    		 break;
-                    	 }
+                    		pnlPlayingField.validate();
+         		            pnlPlayingField.repaint();
+                    	
                     	 
                      }
+                     
+                     else if(data[0].equals("NextTurn"))
+                     {
+                    	 tempHand = Game.handn.split(":");
+                    	 pnlPlayingField.removeAll();
+                    	 pnlPlayingField.revalidate();
+                    	 pnlPlayingField.repaint();
+                    	 if(data[1].equals(playerTurnNum))
+                    	 {
+                    		 btnBuy.setEnabled(true);
+                    		 btnEndTurn.setEnabled(true);
+                    		 activePlayer = true;
+                    		 pnlHand.revalidate();
+                    		 pnlHand.repaint();
+                    		 for(i = 0; i < imgs.length; i++)
+             				{
+             					
+             						String isVictory;
+             						Card ck1;
+             						ck1 = new Card(CardName.valueOf(tempHand[i].toUpperCase()));
+             						isVictory = ck1.getType();
+             						
+             						
+             						
+             						if(isVictory.equals("Victory"))
+             						{
+             							imgs[i].setEnabled(false);
+             						}
+             						else
+             						{
+             							imgs[i].setEnabled(true);
+             						}
+
+             						
+             					}
+             				}
+                    	 }
+                    
               
 
                      else if (data[2].equals(chat)) 
                      {
-                    	if(playerTurnNum == "") 
+                    	if(playerTurnNum.equals(""))
                     	{
                     		playerTurnNum = data[3];
-                    		
+                    		turnOrder = data[4].toString();
                     	}
+                    	
+                		if(playerTurnNum.equals("Player1"))
+                		{
+                			activePlayer = true;
+                		}
                     	
                         ta_chat.append(data[0] + ": " + data[1] + "\n");
                         ta_chat.setCaretPosition(ta_chat.getDocument().getLength());
@@ -223,6 +266,7 @@ public class StartScreen extends JFrame
     
     public void init() 
     {
+ 
     	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	setBounds(100, 100, 600, 570);
     	contentPane = new JPanel();
@@ -402,11 +446,8 @@ public class StartScreen extends JFrame
     
     public  void gameInit()
     {
-    	
-    	if(playerTurnNum == "Player1")
-    	{
-    		activePlayer = true;
-    	}
+     
+    
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1347, 869);
@@ -450,24 +491,31 @@ public class StartScreen extends JFrame
 		scrollPane_1.setBounds(10, 488, 1103, 341);
 		contentPane.add(scrollPane_1);
 		
-		JPanel pnlHand = new JPanel();
+		pnlHand = new JPanel();
 		scrollPane_1.setViewportView(pnlHand);
-		Game.onStart();
-		imgs = Game.getJButtons();
 		pnlPlayingField = new JPanel();
 		scrollPane.add(pnlPlayingField);
 		scrollPane.setViewportView(pnlPlayingField);
 		pnlPlayingField.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
+	  	if(gameStarted == false)
+    	{
+    		Game.onStart();
+    		gameStarted = true;
+    		
+    	}
+	  	imgs = Game.getJButtons();
+    	
 		for(i = 0; i < imgs.length; i++)
 		{
 			
 			
 			pnlHand.add(imgs[i]);
 			int in = Arrays.asList(imgs).indexOf(imgs[i]);
-			if(!playerTurnNum.equals("Player1"))
+			if(activePlayer != true )
 			{
 				imgs[i].setEnabled(false);
 			}
+
 			
 
 
@@ -475,17 +523,8 @@ public class StartScreen extends JFrame
 				public void actionPerformed(ActionEvent e) 
 		        {
 					String tempString = null;
-					int length = pnlPlayingField.getWidth();
-					int height = pnlPlayingField.getHeight();
-					int index =in;
-		            pnlPlayingField.add(imgs[index]);
-		            imgs[index].setEnabled(false);
-		            if(length < pnlPlayingField.getWidth())
-		            {
-		            	pnlPlayingField.setPreferredSize(new Dimension(length, height));
-		            }
-		            pnlHand.remove(imgs[index]);
-		            
+					int index =in;  
+		            pnlHand.remove(imgs[index]);		            
 		            cash = Game.handCash(cash,index);
 		            taInfo.setText("Current Cash:" + String.valueOf(cash) );
 		            validate();
@@ -601,18 +640,26 @@ public class StartScreen extends JFrame
 			btnPlayAction.setEnabled(true);
 		}
 		
-		if(!playerTurnNum.equals("Player1"))
+		if(activePlayer != true)
 		{
 			btnPlayAction.setEnabled(false);
+		}
+		else
+		{
+			btnPlayAction.setEnabled(true);
 		}
 
 		panel_4.add(btnPlayAction, BorderLayout.WEST);
 		
 		btnBuy = new JButton("Buy Cards");
 		panel_4.add(btnBuy, BorderLayout.EAST);
-		if(!playerTurnNum.equals("Player1"))
+		if(activePlayer != true)
 		{
 			btnBuy.setEnabled(false);
+		}
+		else
+		{
+			btnBuy.setEnabled(true);
 		}
 		btnBuy.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
@@ -626,19 +673,35 @@ public class StartScreen extends JFrame
 	
 		btnEndTurn = new JButton("End Turn");
 		panel_4.add(btnEndTurn, BorderLayout.SOUTH);
-		if(playerTurnNum == "Player1")
+		if(activePlayer == true)
 		{
 			btnEndTurn.setEnabled(true);
+		}
+		else
+		{
+			btnEndTurn.setEnabled(false);
 		}
 		btnEndTurn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
+				pnlPlayingField.removeAll();
+				pnlPlayingField.revalidate();
+				pnlPlayingField.repaint();
 				cash = 0;
 				buys = 1;
 				btnBuy.setEnabled(false);
 				btnPlayAction.setEnabled(false);
 				btnEndTurn.setEnabled(false);
+				activePlayer = false;
+				pnlHand.removeAll();
+				pnlHand.revalidate();
+				pnlHand.repaint();
+				Game.handn = "";
 				Game.newHand();
+				imgs = Game.getJButtons();
+				startGameScreen();
+				writer.println("endOfTurn:" + turnOrder);
+				writer.flush();
 			}
 		});
 
@@ -744,6 +807,11 @@ public class StartScreen extends JFrame
     	return buyScreenKingdoms;
     }
     
+    private void transferCards(java.awt.event.ActionEvent evt)
+    {
+    	
+    }
+    
     private void b_anonymousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_anonymousActionPerformed
         tf_username.setText("");
         if (isConnected == false) 
@@ -837,6 +905,7 @@ public class StartScreen extends JFrame
     private javax.swing.JTextField tf_password;
     private javax.swing.JTextField tf_port;
     private javax.swing.JTextField tf_username;
+    private JPanel pnlHand;
     private JPanel contentPane;
     private JPanel pnlPlayingField;
     private JButton btnAddKingdom;

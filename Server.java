@@ -30,6 +30,7 @@ public class Server extends javax.swing.JFrame
    int maxKingdoms = 0;
    String king;
    public  int playerNum = 0;
+   static int turnOrder = 0;
    
 
    public class ClientHandler implements Runnable	
@@ -59,6 +60,7 @@ public class Server extends javax.swing.JFrame
        {
             String message, connect = "Connect", disconnect = "Disconnect", chat = "Chat", kingdoms = "Kingdoms",   p1 = "p1", p2 ="p2", p3 ="p3", p4 = "p4", p5 ="p5", p6 = "p6";
             String[] data;
+            String endOfTurn = "endOfTurn";
 
             try 
             {
@@ -78,6 +80,19 @@ public class Server extends javax.swing.JFrame
                     	tellEveryone(message);
                     }
                     
+                    else if(data[0].equals(endOfTurn))
+                    {                   
+                    	turnOrder = Integer.valueOf(data[1]);
+                    	turnOrder += 1;
+                    	if(turnOrder > playerNum)
+                    	{
+                    		turnOrder = 1;
+                    	}
+                    	data = null;
+                    	tellEveryone("NextTurn:Player" + turnOrder);
+                    	
+                    }
+                    
                     else if(data[0].equals("pField"))
                     {
                     	tellEveryone("pField:" + data[1]);
@@ -86,7 +101,7 @@ public class Server extends javax.swing.JFrame
                     else if (data[2].equals(connect)) 
                     {
                     	playerNum +=1;
-                        tellEveryone((data[0] + ":" + data[1] + ":" + chat + ":Player" + playerNum));
+                        tellEveryone((data[0] + ":" + data[1] + ":" + chat + ":Player" + playerNum + ":" + playerNum));
                         userAdd(data[0]);
                     } 
 

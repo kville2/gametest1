@@ -5,6 +5,7 @@ import java.util.Random;
 public class Deck extends Hand 
 {
 	Random rand = new Random();
+	static int deckCards;
 	public void populate()
 	{
 		
@@ -57,9 +58,14 @@ public class Deck extends Hand
 	
 	public void deal(Hand hand, int perHand)
 	{
+		
 		for(int i = 0; i < perHand; i++)
 		{
 			
+			if(cards.size() == 0)
+			{
+				Game.huffle();
+			}
 			this.give(cards.get(0), hand);
 		}
 	}

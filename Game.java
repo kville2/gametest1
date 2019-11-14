@@ -44,6 +44,7 @@ public class Game extends GameWindow
 	static String infoString;
 	static String[] handNames;
 	static String handn ="";
+	static int deckAmt;
 	
 	/**
 	 * 
@@ -78,9 +79,19 @@ public class Game extends GameWindow
 		
 	}
 	
+	public static void huffle()
+	{
+		cardsize = discard.cards.size();
+		deck.clearDiscard(discard, cardsize);
+		deck.shuffle();
+	}
+	
 	public static void newHand()
 	{
+		
 		discard.discard(hand, cardsize);
+		hand.clear();
+		deckAmt = deck.cards.size();
 		deck.deal(hand, 5);
 		i = 0;
 		displayHand();
@@ -261,6 +272,12 @@ public class Game extends GameWindow
 		System.out.println("Shuffling deck");
 		System.out.println("A shuffled deck");
 		System.out.println(deck.showHand());
+		
+	}
+
+	public static void reShuffle1() 
+	{
+		
 		
 	}
 	
