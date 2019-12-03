@@ -45,6 +45,8 @@ public class Game extends GameWindow
 	static String[] handNames;
 	static String handn ="";
 	static int deckAmt;
+	static JButton addedCard;
+	static String drawnCard;
 	
 	/**
 	 * 
@@ -63,6 +65,11 @@ public class Game extends GameWindow
 		
 		
 						
+	}
+	
+	public static JButton newButton()
+	{
+		return addedCard;
 	}
 	
 	public static int handCash(int cash, int index)
@@ -95,6 +102,19 @@ public class Game extends GameWindow
 		deck.deal(hand, 5);
 		i = 0;
 		displayHand();
+	}
+	
+	public static void plus1Card()
+	{
+
+		deck.deal(hand, 1);
+		drawnCard = Hand.lastCardName();
+		Card c1 = new Card(CardName.valueOf(drawnCard.toUpperCase()));
+		cardType(c1);
+		singleAssignImg(c1);
+		handNames = handn.split(":");
+
+	
 	}
 	
 	public static void firstSetup()
@@ -158,6 +178,18 @@ public class Game extends GameWindow
 		
 	}
 	
+	public static void singleAssignImg(Card c)
+	{
+		addedCard = new JButton();
+		addedCard.setMargin(new Insets(0,0,0,0));
+		imagePath = "/Images/" + c.getName() + ".jpg";
+		java.net.URL imageUrl = Game.class.getResource("/Images/" + c.getName() + ".jpg");
+		addedCard.setIcon(new ImageIcon(imageUrl));		
+		addedCard.setDisabledIcon(new ImageIcon(imageUrl));		
+		singlevpEnables(isVictory);
+		handn += c.getName() + ":";
+	}
+	
 	public static void assignImgs(Card c)
 	{
 		
@@ -173,10 +205,25 @@ public class Game extends GameWindow
 		
 	}
 	
+	public static void singlevpEnables(Boolean isVictory)
+	{
+		if(isVictory == true)
+		{
+			
+			addedCard.setEnabled(false);
+		}
+		else
+		{
+			addedCard.setEnabled(true);
+		}
+
+	}
+	
 	public static void vpEnables(Boolean isVictory)
 	{
 		if(isVictory == true)
 		{
+			
 			imgs[i].setEnabled(false);
 		}
 		else
@@ -218,6 +265,8 @@ public class Game extends GameWindow
 		discard.addBuyCard(kingdomCard);
 		
 	}
+	
+	
 
 	public static void theDeck()
 	{

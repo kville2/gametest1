@@ -45,7 +45,7 @@ public class StartScreen extends JFrame
     int maxKingdoms = 0;
     Socket sock;
     BufferedReader reader;
-    PrintWriter writer;
+    static PrintWriter writer;
 	private JButton btnBuy;
 	static Game game;
 	static JButton[] imgs;
@@ -67,6 +67,8 @@ public class StartScreen extends JFrame
 	public static int buys = 1;
 	static Boolean gameStarted = false;
 	static int imageL;
+	static int actions = 1;
+	static JButton extraCard;
     
     //--------------------------//
     
@@ -181,20 +183,21 @@ public class StartScreen extends JFrame
                      
                      else if(data[0].equals("NextTurn"))
                      {
+                    	 actions = 0;
                     	 tempHand = Game.handn.split(":");
                     	 pnlPlayingField.removeAll();
                     	 pnlPlayingField.revalidate();
                     	 pnlPlayingField.repaint();
                     	 if(data[1].equals(playerTurnNum))
                     	 {
+                    		 actions = 1;
                     		 btnBuy.setEnabled(true);
                     		 btnEndTurn.setEnabled(true);
                     		 activePlayer = true;
                     		 pnlHand.revalidate();
                     		 pnlHand.repaint();
                     		 for(i = 0; i < imgs.length; i++)
-             				{
-             					
+             				{	
              						String isVictory;
              						Card ck1;
              						ck1 = new Card(CardName.valueOf(tempHand[i].toUpperCase()));
@@ -211,7 +214,6 @@ public class StartScreen extends JFrame
              							imgs[i].setEnabled(true);
              						}
 
-             						
              					}
              				}
                     	 }
@@ -444,8 +446,192 @@ public class StartScreen extends JFrame
     	
     }
     
+    public static void playAction(Card c)
+    {
+    	 switch(c.getName())
+         {
+         	case "Cellar":
+         	{
+         		
+         		break;
+         	}
+         	
+         	case "Chapel":
+         	{
+         		break;
+         	}
+         	case "Moat":
+         	{
+         		break;
+         	}
+         	
+         	case "Harbinger":
+         	{
+         		break;
+         	}
+         	
+         	case "Merchant":
+         	{
+         		break;
+         	}
+         	
+         	case "Vassal":
+         	{
+         		break;
+         	}
+         	
+         	case "Village":
+         	{
+         		String drawnCard;
+         		actions -=1;
+         		actions +=2;
+         		Game.plus1Card();
+         		extraCard = Game.newButton();
+         		pnlHand.add(extraCard);
+         		pnlHand.revalidate();
+		        pnlHand.repaint();
+         		if(activePlayer != true )
+    			{
+         			extraCard.setEnabled(false);
+    			}
+
+    			
+
+
+         		extraCard.addActionListener(new ActionListener() {
+    				public void actionPerformed(ActionEvent e) 
+    		        {
+    					
+    				 if(actions != 0)
+    				{
+    					String tempString = null;
+    		            pnlHand.remove(extraCard);
+    		            pnlHand.validate();
+    		            pnlHand.repaint();
+    		            tempString = Game.drawnCard;
+    		            cash += CardName.valueOf(tempString.toUpperCase()).getCash();
+    	    		    taInfo.setText("Current Cash:" + String.valueOf(cash) );
+    		            sendPlayingField(tempString);
+    		            tempString = tempString.toUpperCase();
+    		            Card c = new Card(CardName.valueOf(tempString));
+    		            playAction(c);
+    				}
+    				 
+    				 else
+    				 {
+    					 lblPhase.setText("No more actions");
+    				 }
+    		           
+    		        }
+    				
+    		    });
+         		
+         		break;
+         	}
+         	
+         	case "Workshop":
+         	{
+         		break;
+         	}
+         	
+         	case "Bureaucrat":
+         	{
+         		break;
+         	}
+         	
+         	case "Gardens":
+         	{
+         		break;
+         	}
+         	
+         	case "Militia":
+         	{
+         		break;
+         	}
+         	
+         	case "Moneylender":
+         	{
+         		break;
+         	}
+         	
+         	case "Poacher":
+         	{
+         		break;
+         	}
+         	
+         	case "Remodel":
+         	{
+         		break;
+         	}
+         	
+         	case "Smithy":
+         	{
+         		break;
+         	}
+         	
+         	case "Throneroom":
+         	{
+         		break;
+         	}
+         	
+         	case "Bandit":
+         	{
+         		break;
+         	}
+         	
+         	case "Councilroom":
+         	{
+         		break;
+         	}
+         	
+         	case "Festival":
+         	{
+         		break;
+         	}
+         	
+         	case "Laboratory":
+         	{
+         		break;
+         	}
+         	
+         	case "Library":
+         	{
+         		break;
+         	}
+         	
+         	case "Market":
+         	{
+         		break;
+         	}
+         	
+         	case "Mine":
+         	{
+         		break;
+         	}
+         	
+         	case "Sentry":
+         	{
+         		break;
+         	}
+         	
+         	case "Witch":
+         	{
+         		break;
+         	}
+         	
+         	case "Artisan":
+         	{
+         		break;
+         	}
+         	
+         	
+         
+         }
+    }
+    
     public  void gameInit()
     {
+    	
      
     
 		setResizable(false);
@@ -470,6 +656,7 @@ public class StartScreen extends JFrame
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.getViewport().setPreferredSize(new Dimension(512, 448));
 		scrollPane.setBounds(10, 11, 1103, 341);
+		scrollPane.setAutoscrolls(true);
 		contentPane.add(scrollPane);
 		JScrollPane scrollPane_2 = new JScrollPane();
 		scrollPane_2.setBounds(10, 363, 439, 120);
@@ -489,6 +676,7 @@ public class StartScreen extends JFrame
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
 		scrollPane_1.setBounds(10, 488, 1103, 341);
+		scrollPane_1.setAutoscrolls(true);
 		contentPane.add(scrollPane_1);
 		
 		pnlHand = new JPanel();
@@ -522,16 +710,28 @@ public class StartScreen extends JFrame
 			imgs[i].addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) 
 		        {
+					
+				 if(actions != 0)
+				{
 					String tempString = null;
 					int index =in;  
-		            pnlHand.remove(imgs[index]);		            
+		            pnlHand.remove(imgs[index]);
 		            cash = Game.handCash(cash,index);
 		            taInfo.setText("Current Cash:" + String.valueOf(cash) );
 		            validate();
 		            repaint();
 		            tempString = Game.handNames[index];
 		            sendPlayingField(tempString);
-		            
+		            tempString = tempString.toUpperCase();
+		            Card c = new Card(CardName.valueOf(tempString));
+		            playAction(c);
+				}
+				 
+				 else
+				 {
+					 lblPhase.setText("No more actions");
+				 }
+		           
 		        }
 				
 		    });
@@ -724,7 +924,7 @@ public class StartScreen extends JFrame
 		repaint();
 	}
     
-    private void sendPlayingField(String kingdoms2)
+    private static void sendPlayingField(String kingdoms2)
     {
     	writer.println("pField:" + kingdoms2);
     	writer.flush();
@@ -905,7 +1105,7 @@ public class StartScreen extends JFrame
     private javax.swing.JTextField tf_password;
     private javax.swing.JTextField tf_port;
     private javax.swing.JTextField tf_username;
-    private JPanel pnlHand;
+    private static JPanel pnlHand;
     private JPanel contentPane;
     private JPanel pnlPlayingField;
     private JButton btnAddKingdom;
@@ -916,10 +1116,10 @@ public class StartScreen extends JFrame
     private JButton btnStartGame;
     private JTextArea taTurnLogs;
     private JButton btnEndTurn;
-    private JLabel lblPhase;
+    private static JLabel lblPhase;
     private JButton btnPlayAction;
     private DefaultListModel lstModel2;
-    private JTextArea taInfo;
+    private static JTextArea taInfo;
     private JButton btnCopper;
     private JButton btnSilver;
     private JButton btnGold;

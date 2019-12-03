@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Hand 
 {
 	public ArrayList<Card> cards;
+	static String lastcard;
 	
 	public Hand()
 	{
@@ -20,7 +21,16 @@ public class Hand
 	public void add(Card card)
 	{
 		cards.add(card);
+		lastcard = card.getName();
 	}
+	
+	public static String lastCardName()
+	{
+		return lastcard;
+		
+	}
+	
+	
 	
 	public void remove(Card card)
 	{

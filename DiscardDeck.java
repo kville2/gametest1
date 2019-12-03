@@ -14,6 +14,12 @@ public class DiscardDeck extends Hand
 		}
 	}
 	
+	public void discard(Hand hand, String c)
+	{
+		
+
+	}
+	
 	public void addBuyCard(String kingdom)
 	{
 		kingdom = kingdom.toUpperCase();

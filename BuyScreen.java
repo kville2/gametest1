@@ -120,10 +120,9 @@ public class BuyScreen extends JFrame {
 			{
 				Game.buyCard("COPPER");
 				StartScreen.buys -= 1;
-				revalidate();
-				repaint();
-
-
+				BuyScreen fr = new BuyScreen();
+				fr.setVisible(true);
+				dispose();
 			}
 		});
 		
@@ -151,8 +150,9 @@ public class BuyScreen extends JFrame {
 			{
 				Game.buyCard("SILVER");
 				StartScreen.buys -= 1;
-				revalidate();
-				repaint();
+				BuyScreen fr = new BuyScreen();
+				fr.setVisible(true);
+				dispose();
 			}
 		});
 		
@@ -180,8 +180,9 @@ public class BuyScreen extends JFrame {
 			{
 				Game.buyCard("GOLD");
 				StartScreen.buys -= 1;
-				revalidate();
-				repaint();
+				BuyScreen fr = new BuyScreen();
+				fr.setVisible(true);
+				dispose();
 			}
 		});
 		
@@ -209,8 +210,9 @@ public class BuyScreen extends JFrame {
 			{
 				Game.buyCard("ESTATE");
 				StartScreen.buys -= 1;
-				revalidate();
-				repaint();
+				BuyScreen fr = new BuyScreen();
+				fr.setVisible(true);
+				dispose();
 			}
 		});
 		
@@ -238,8 +240,9 @@ public class BuyScreen extends JFrame {
 			{
 				Game.buyCard("DUCHY");
 				StartScreen.buys -= 1;
-				revalidate();
-				repaint();
+				BuyScreen fr = new BuyScreen();
+				fr.setVisible(true);
+				dispose();
 			}
 		});
 		
@@ -267,8 +270,9 @@ public class BuyScreen extends JFrame {
 			{
 				Game.buyCard("PROVINCE");
 				StartScreen.buys -= 1;
-				revalidate();
-				repaint();
+				BuyScreen fr = new BuyScreen();
+				fr.setVisible(true);
+				dispose();
 			}
 		});
 		
@@ -296,8 +300,9 @@ public class BuyScreen extends JFrame {
 			{
 				Game.buyCard("CURSE");
 				StartScreen.buys -= 1;
-				revalidate();
-				repaint();
+				BuyScreen fr = new BuyScreen();
+				fr.setVisible(true);
+				dispose();
 			}
 		});
 		
@@ -340,8 +345,9 @@ public class BuyScreen extends JFrame {
 			{
 				Game.buyCard(kingdoms[1]);
 				StartScreen.buys -= 1;
-				revalidate();
-				repaint();
+				BuyScreen fr = new BuyScreen();
+				fr.setVisible(true);
+				dispose();
 			}
 		});
 		
@@ -386,8 +392,9 @@ public class BuyScreen extends JFrame {
 			{
 				Game.buyCard(kingdoms[2]);
 				StartScreen.buys -= 1;
-				revalidate();
-				repaint();
+				BuyScreen fr = new BuyScreen();
+				fr.setVisible(true);
+				dispose();
 			}
 		});
 		
@@ -430,8 +437,9 @@ public class BuyScreen extends JFrame {
 			{
 				Game.buyCard(kingdoms[3]);
 				StartScreen.buys -= 1;
-				revalidate();
-				repaint();
+				BuyScreen fr = new BuyScreen();
+				fr.setVisible(true);
+				dispose();
 			}
 		});
 		
@@ -474,8 +482,9 @@ public class BuyScreen extends JFrame {
 			{
 				Game.buyCard(kingdoms[4]);
 				StartScreen.buys -= 1;
-				revalidate();
-				repaint();
+				BuyScreen fr = new BuyScreen();
+				fr.setVisible(true);
+				dispose();
 			}
 		});
 		
@@ -518,8 +527,9 @@ public class BuyScreen extends JFrame {
 			{
 				Game.buyCard(kingdoms[5]);
 				StartScreen.buys -= 1;
-				revalidate();
-				repaint();
+				BuyScreen fr = new BuyScreen();
+				fr.setVisible(true);
+				dispose();
 			}
 		});
 		
@@ -564,8 +574,9 @@ public class BuyScreen extends JFrame {
 			{
 				Game.buyCard(kingdoms[6]);
 				StartScreen.buys -= 1;
-				revalidate();
-				repaint();
+				BuyScreen fr = new BuyScreen();
+				fr.setVisible(true);
+				dispose();
 			}
 		});
 		
@@ -608,8 +619,9 @@ public class BuyScreen extends JFrame {
 			{
 				Game.buyCard(kingdoms[7]);
 				StartScreen.buys -= 1;
-				revalidate();
-				repaint();
+				BuyScreen fr = new BuyScreen();
+				fr.setVisible(true);
+				dispose();
 			}
 		});
 		
@@ -652,8 +664,9 @@ public class BuyScreen extends JFrame {
 			{
 				Game.buyCard(kingdoms[8]);
 				StartScreen.buys -= 1;
-				revalidate();
-				repaint();
+				BuyScreen fr = new BuyScreen();
+				fr.setVisible(true);
+				dispose();
 			}
 		});
 		
@@ -696,8 +709,9 @@ public class BuyScreen extends JFrame {
 			{
 				Game.buyCard(kingdoms[9]);
 				StartScreen.buys -= 1;
-				revalidate();
-				repaint();
+				BuyScreen fr = new BuyScreen();
+				fr.setVisible(true);
+				dispose();
 			}
 		});
 		
@@ -740,8 +754,9 @@ public class BuyScreen extends JFrame {
 			{
 				Game.buyCard(kingdoms[10]);
 				StartScreen.buys -= 1;
-				revalidate();
-				repaint();
+				BuyScreen fr = new BuyScreen();
+				fr.setVisible(true);
+				dispose();
 			}
 		});
 		
