@@ -14,10 +14,19 @@ public class DiscardDeck extends Hand
 		}
 	}
 	
-	public void discard(Hand hand, String c)
+	public void discard1(Hand hand, int index)
 	{
-		
-
+		if(index == 0)
+		{
+			index = 0;
+			
+		}
+		else
+		{
+			index -=1;
+		}
+		hand1.add(hand.cards.get(index));
+		hand.cards.remove(index);
 	}
 	
 	public void addBuyCard(String kingdom)

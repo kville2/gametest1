@@ -47,6 +47,8 @@ public class Game extends GameWindow
 	static int deckAmt;
 	static JButton addedCard;
 	static String drawnCard;
+	static int actionCardsIn;
+	static JButton[] imgs1;
 	
 	/**
 	 * 
@@ -80,7 +82,7 @@ public class Game extends GameWindow
 		return cash;
 	}
 	
-	public static void playerCash(Card c)
+	public static void handToPlay()
 	{
 		
 		
@@ -106,15 +108,10 @@ public class Game extends GameWindow
 	
 	public static void plus1Card()
 	{
+		deck.deal(hand, 1);		
+		i = 0;
+		displayHand();
 
-		deck.deal(hand, 1);
-		drawnCard = Hand.lastCardName();
-		Card c1 = new Card(CardName.valueOf(drawnCard.toUpperCase()));
-		cardType(c1);
-		singleAssignImg(c1);
-		handNames = handn.split(":");
-
-	
 	}
 	
 	public static void firstSetup()
@@ -180,12 +177,12 @@ public class Game extends GameWindow
 	
 	public static void singleAssignImg(Card c)
 	{
-		addedCard = new JButton();
-		addedCard.setMargin(new Insets(0,0,0,0));
+		imgs[i] = new JButton();
+		imgs[i].setMargin(new Insets(0,0,0,0));
 		imagePath = "/Images/" + c.getName() + ".jpg";
 		java.net.URL imageUrl = Game.class.getResource("/Images/" + c.getName() + ".jpg");
-		addedCard.setIcon(new ImageIcon(imageUrl));		
-		addedCard.setDisabledIcon(new ImageIcon(imageUrl));		
+		imgs[i].setIcon(new ImageIcon(imageUrl));		
+		imgs[i].setDisabledIcon(new ImageIcon(imageUrl));		
 		singlevpEnables(isVictory);
 		handn += c.getName() + ":";
 	}

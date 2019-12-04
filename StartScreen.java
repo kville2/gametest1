@@ -69,6 +69,8 @@ public class StartScreen extends JFrame
 	static int imageL;
 	static int actions = 1;
 	static JButton extraCard;
+	static boolean actionCardsLeft;
+	static int actionCardsAmt;
     
     //--------------------------//
     
@@ -175,7 +177,7 @@ public class StartScreen extends JFrame
            		            {
            		            	pnlPlayingField.setPreferredSize(new Dimension(length, height));
            		            }
-                    		pnlPlayingField.validate();
+                    		pnlPlayingField.revalidate();
          		            pnlPlayingField.repaint();
                     	
                     	 
@@ -216,6 +218,15 @@ public class StartScreen extends JFrame
 
              					}
              				}
+                    	 
+                    	 actionCardsAmt = 0;
+                    	 for(Card c : Game.hand.cards)
+                		 {
+                			 if(c.getType() == "Action")
+                			 {
+                				 actionCardsAmt += 1;
+                			 }
+                		 }
                     	 }
                     
               
@@ -450,6 +461,10 @@ public class StartScreen extends JFrame
     {
     	 switch(c.getName())
          {
+    	    case "Copper" :
+    	    {
+    	    	
+    	    }
          	case "Cellar":
          	{
          		
@@ -482,50 +497,69 @@ public class StartScreen extends JFrame
          	
          	case "Village":
          	{
+         		
          		String drawnCard;
          		actions -=1;
          		actions +=2;
          		Game.plus1Card();
-         		extraCard = Game.newButton();
-         		pnlHand.add(extraCard);
-         		pnlHand.revalidate();
-		        pnlHand.repaint();
          		if(activePlayer != true )
     			{
          			extraCard.setEnabled(false);
     			}
 
-    			
+         		imgs = Game.getJButtons();
+         		for(Card c1 : Game.hand.cards)
+       		 {
+       			 if(c1.getType() == "Action")
+       			 {
+       				 actionCardsAmt += 1;
+       			 }
+       		 }
+           	
+       			pnlHand.add(imgs[Game.i - 1]);
+       			int in = Arrays.asList(imgs).indexOf(imgs[Game.i - 1]);
+       			if(activePlayer != true )
+       			{
+       				imgs[Game.i-1].setEnabled(false);
+       			}
 
+       			
+       			imgs[i].addActionListener(new ActionListener() {
+       				public void actionPerformed(ActionEvent e) 
+       		        {
 
-         		extraCard.addActionListener(new ActionListener() {
-    				public void actionPerformed(ActionEvent e) 
-    		        {
-    					
-    				 if(actions != 0)
-    				{
-    					String tempString = null;
-    		            pnlHand.remove(extraCard);
-    		            pnlHand.validate();
-    		            pnlHand.repaint();
-    		            tempString = Game.drawnCard;
-    		            cash += CardName.valueOf(tempString.toUpperCase()).getCash();
-    	    		    taInfo.setText("Current Cash:" + String.valueOf(cash) );
-    		            sendPlayingField(tempString);
-    		            tempString = tempString.toUpperCase();
-    		            Card c = new Card(CardName.valueOf(tempString));
-    		            playAction(c);
-    				}
-    				 
-    				 else
-    				 {
-    					 lblPhase.setText("No more actions");
-    				 }
-    		           
-    		        }
-    				
-    		    });
-         		
+       				 if(actions != 0 || actionCardsAmt == 0)
+       				{
+       					
+       					String tempString = null;
+       					int index =in;  
+       					Game.discard.discard1(Game.hand, index);
+       					actionCardsAmt -= 1;
+       		            pnlHand.remove(imgs[index]);
+       		            cash = Game.handCash(cash,index);
+       		            taInfo.setText("Current Cash:" + String.valueOf(cash) );
+       		            pnlHand.revalidate();
+       		            pnlHand.repaint();
+       		            tempString = Game.handNames[index];
+       		            sendPlayingField(tempString);
+       		            tempString = tempString.toUpperCase();
+       		            Card c = new Card(CardName.valueOf(tempString));
+       		            playAction(c);
+       				}
+       				 
+       				 else
+       				 {
+       					 lblPhase.setText("No more actions");
+       				 }
+       		           
+       		        }
+       				
+       				
+       				
+       		    });
+		            pnlHand.revalidate();
+		            pnlHand.repaint();
+
          		break;
          	}
          	
@@ -691,6 +725,13 @@ public class StartScreen extends JFrame
     		gameStarted = true;
     		
     	}
+	  	for(Card c : Game.hand.cards)
+		 {
+			 if(c.getType() == "Action")
+			 {
+				 actionCardsAmt += 1;
+			 }
+		 }
 	  	imgs = Game.getJButtons();
     	
 		for(i = 0; i < imgs.length; i++)
@@ -710,20 +751,24 @@ public class StartScreen extends JFrame
 			imgs[i].addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) 
 		        {
-					
-				 if(actions != 0)
+
+				 if(actions != 0 || actionCardsAmt == 0)
 				{
+					
 					String tempString = null;
 					int index =in;  
+					Game.discard.discard1(Game.hand, index);
+					actionCardsAmt -= 1;
 		            pnlHand.remove(imgs[index]);
+		            pnlHand.revalidate();
+		            pnlHand.repaint();
 		            cash = Game.handCash(cash,index);
 		            taInfo.setText("Current Cash:" + String.valueOf(cash) );
-		            validate();
-		            repaint();
 		            tempString = Game.handNames[index];
 		            sendPlayingField(tempString);
 		            tempString = tempString.toUpperCase();
 		            Card c = new Card(CardName.valueOf(tempString));
+		            
 		            playAction(c);
 				}
 				 
